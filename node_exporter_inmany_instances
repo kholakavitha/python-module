@@ -1,0 +1,47 @@
+import paramiko
+from concurrent.futures import ThreadPoolExecutor
+
+# Define the EC2 instances details
+ec2_instances = [
+    {'ip_address': 'YOUR_EC2_INSTANCE_1_IP_ADDRESS', 'username': 'YOUR_EC2_INSTANCE_1_USERNAME', 'keyfile': '/path/to/YOUR_EC2_INSTANCE_1_KEYFILE.pem'},
+    {'ip_address': 'YOUR_EC2_INSTANCE_2_IP_ADDRESS', 'username': 'YOUR_EC2_INSTANCE_2_USERNAME', 'keyfile': '/path/to/YOUR_EC2_INSTANCE_2_KEYFILE.pem'}
+]
+
+# Define the node exporter service file contents
+service_file_contents = """
+[Unit]
+Description=Node Exporter
+
+[Service]
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=default.target
+"""
+
+def install_node_exporter(instance_details):
+    # Connect to the EC2 instance
+    ssh_client = paramiko.SSHClient()
+    ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+    ssh_client.connect(instance_details['ip_address'], username=instance_details['username'], key_filename=instance_details['keyfile'])
+
+    # Download and install node exporter
+    stdin, stdout, stderr = ssh_client.exec_command('wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz')
+    stdin, stdout, stderr = ssh_client.exec_command('tar xvfz node_exporter-1.2.2.linux-amd64.tar.gz')
+    stdin, stdout, stderr = ssh_client.exec_command('sudo cp node_exporter-1.2.2.linux-amd64/node_exporter /usr/local/bin')
+
+    # Create the node exporter service file
+    service_file_path = '/etc/systemd/system/node_exporter.service'
+    stdin, stdout, stderr = ssh_client.exec_command(f'sudo sh -c "echo \'{service_file_contents}\' > {service_file_path}"')
+
+    # Reload systemd and start the node exporter service
+    stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl daemon-reload')
+    stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl enable node_exporter')
+    stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl start node_exporter')
+
+    # Close the SSH connection
+    ssh_client.close()
+
+# Create a thread pool to run the install_node_exporter function on multiple instances in parallel
+with ThreadPoolExecutor() as executor:
+    results = executor.map(install_node_exporter, ec2_instances)
