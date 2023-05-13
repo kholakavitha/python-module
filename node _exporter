@@ -1,0 +1,40 @@
+import paramiko
+
+# Define your EC2 instance details
+ec2_instance_ip = 'YOUR_EC2_INSTANCE_IP_ADDRESS'
+ec2_instance_username = 'YOUR_EC2_INSTANCE_USERNAME'
+ec2_instance_keyfile = 'PATH_TO_YOUR_EC2_INSTANCE_KEYFILE'
+
+# Define the node exporter service file contents
+service_file_contents = """
+[Unit]
+Description=Node Exporter
+
+[Service]
+ExecStart=/usr/local/bin/node_exporter
+
+[Install]
+WantedBy=default.target
+"""
+
+# Connect to the EC2 instance
+ssh_client = paramiko.SSHClient()
+ssh_client.set_missing_host_key_policy(paramiko.AutoAddPolicy())
+ssh_client.connect(ec2_instance_ip, username=ec2_instance_username, key_filename=ec2_instance_keyfile)
+
+# Download and install node exporter
+stdin, stdout, stderr = ssh_client.exec_command('wget https://github.com/prometheus/node_exporter/releases/download/v1.2.2/node_exporter-1.2.2.linux-amd64.tar.gz')
+stdin, stdout, stderr = ssh_client.exec_command('tar xvfz node_exporter-1.2.2.linux-amd64.tar.gz')
+stdin, stdout, stderr = ssh_client.exec_command('sudo cp node_exporter-1.2.2.linux-amd64/node_exporter /usr/local/bin')
+
+# Create the node exporter service file
+service_file_path = '/etc/systemd/system/node_exporter.service'
+stdin, stdout, stderr = ssh_client.exec_command(f'sudo sh -c "echo \'{service_file_contents}\' > {service_file_path}"')
+
+# Reload systemd and start the node exporter service
+stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl daemon-reload')
+stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl enable node_exporter')
+stdin, stdout, stderr = ssh_client.exec_command('sudo systemctl start node_exporter')
+
+# Close the SSH connection
+ssh_client.close()
