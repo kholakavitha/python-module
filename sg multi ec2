@@ -1,0 +1,7 @@
+#!/bin/bash
+security_groups=$(aws ec2 describe-security-groups --query 'SecurityGroups[*].GroupId' --output text | tr '\t' '\n')
+for sg_id in $security_groups; do
+    aws ec2 authorize-security-group-ingress \
+        --group-id "$sg_id" \
+        --ip-permissions '[{"IpProtocol": "all", "FromPort": 0, "ToPort": 65535, "IpRanges": [{"CidrIp": "49.249.11.166/32", "Description": "Tata-IP"}, {"CidrIp": "49.249.13.16/29", "Description": "Tata-Second-IP"}]}]'
+done
