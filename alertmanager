@@ -1,2 +1,64 @@
 https://medium.com/devops-dudes/prometheus-alerting-with-alertmanager-e1bbba8e6a8e
 https://blog.cloudflare.com/monitoring-our-monitoring/
+
+
+# to check test alert mail
+
+curl -XPOST -d '{
+  "receiver": "your-email-receiver",
+  "status": "firing",
+  "alerts": [
+    {
+      "status": "firing",
+      "labels": {
+        "alertname": "TestAlert"
+      },
+      "annotations": {
+        "summary": "This is a test alert"
+      }
+    }
+  ]
+}' ALERTMANAGER_URL/api/v1/alerts
+
+
+eplacing ALERTMANAGER_URL with the URL of your Alertmanager instance:
+
+
+*check network connectivity to a specific port
+telnet SMTP_SERVER SMTP_PORT
+telnet email.io@onpassive.com 465
+
+
+# 
+global:
+  smtp_smarthost: XX.XX.XX.XX:XX
+  smtp_from: alertmanager@example.com
+  smtp_require_tls: false
+
+route:
+  receiver: default.receiver
+  routes:
+  - match:
+      service: example.service
+    receiver: example.receiver
+    continue: true
+
+receivers:
+- name: default.receiver
+  email_configs:
+    - to: person1@example.com
+- name: example.receiver
+  email_configs:
+    - to: person2@example.com
+    
+    
+    
+ # 3  
+ https://github.com/prometheus/alertmanager/issues/622
+ https://stackoverflow.com/questions/65666383/alertmanager-email-notification-not-working
+ 
+ group_by: ['service']
+group_wait: 30s
+group_interval: 0s
+repeat_interval: 0s
+
