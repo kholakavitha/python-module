@@ -1,6 +1,9 @@
 https://medium.com/devops-dudes/prometheus-alerting-with-alertmanager-e1bbba8e6a8e
 https://blog.cloudflare.com/monitoring-our-monitoring/
 
+# To set users, team, floder, assign permissions
+https://grafana.com/tutorials/create-users-and-teams/
+
 
 # to check test alert mail
 
@@ -29,27 +32,39 @@ telnet SMTP_SERVER SMTP_PORT
 telnet email.io@onpassive.com 465
 
 
-# 
+# working email notification  aleertmanager.yml
+
 global:
-  smtp_smarthost: XX.XX.XX.XX:XX
-  smtp_from: alertmanager@example.com
-  smtp_require_tls: false
-
+  resolve_timeout: 5m
+  smtp_smarthost: 'smtp.omail.ai:465'
+  smtp_from: 'alerts@omail.ai'
+  smtp_require_tls: true
+        #templates: /etc/alertmanager/templates
 route:
-  receiver: default.receiver
-  routes:
-  - match:
-      service: example.service
-    receiver: example.receiver
-    continue: true
-
+  group_by: ['alertname']
+  group_wait: 30s
+  group_interval: 5s
+  repeat_interval: 30m
+  receiver: 'email'
 receivers:
-- name: default.receiver
+- name: 'email'
   email_configs:
-    - to: person1@example.com
-- name: example.receiver
-  email_configs:
-    - to: person2@example.com
+  - to: 'operations@onpassive.com'
+    from: 'alerts@omail.ai'
+    smarthost: 'smtp.omail.ai:465'
+    auth_username: 'alerts@omail.ai'
+    auth_identity: 'alerts@omail.ai'
+    auth_password: 'ok6RPnNsUiPo50nw4Ut'
+    require_tls: false
+    send_resolved: true
+inhibit_rules:
+  - source_match:
+      severity: 'critical'
+    target_match:
+      severity: 'warning'
+    equal: ['alertname', 'dev', 'instance']
+
+
     
     
     
