@@ -1,0 +1,19 @@
+# Redis congiure with grafana
+https://grafana.com/grafana/plugins/redis-datasource/
+https://redisgrafana.github.io/redis-datasource/redis/CLUSTER-INFO/
+
+# Grafana users, teams creations link
+https://grafana.com/tutorials/create-users-and-teams/
+
+# grafana dashbord link
+https://grafana.com/grafana/dashboards/?dataSource=redis-datasource
+
+# prometheus rules file
+https://medium.com/devops-dudes/prometheus-alerting-with-alertmanager-e1bbba8e6a8e
+https://blog.cloudflare.com/monitoring-our-monitoring/
+https://www.squadcast.com/blog/prometheus-sample-alert-rules
+
+
+# Blackbox_expoerter
+https://devconnected.com/how-to-install-and-configure-blackbox-exporter-for-prometheus/
+https://geekflare.com/monitor-website-with-blackbox-prometheus-grafana/
