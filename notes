@@ -1,0 +1,15 @@
+# prometheus_jmx exporter for tomcat applications metrics
+https://github.com/prometheus/jmx_exporter/releases
+https://pitstop.manageengine.com/portal/en/kb/articles/how-to-configure-tomcat-exporter-to-scrape-metrics-from-prometheus
+https://www.google.com/search?q=prometheus+tomcat+metrics&rlz=1C1CHBD_enIN1056IN1056&oq=prometheus+tomcat+metrics+&aqs=chrome..69i57j0i22i30.15816j0j7&sourceid=chrome&ie=UTF-8#fpstate=ive&vld=cid:c12cbd2d,vid:HFE2qHDieSU
+https://geekflare.com/monitor-website-with-blackbox-prometheus-grafana/
+https://blog.cloudflare.com/monitoring-our-monitoring/
+
+
+# mongodb 
+https://www.bmc.com/blogs/mongodb-create-database/
+\
+
+# promtail 
+https://computingforgeeks.com/forward-logs-to-grafana-loki-using-promtail/?utm_content=bd-true
+https://computingforgeeks.com/forward-logs-to-grafana-loki-using-promtail/
